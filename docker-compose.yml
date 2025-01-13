@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Servicio para el backend (Django)
+  backend:
+    build:
+      context: ./django_crud_api  # Directorio donde está el Dockerfile del backend
+      dockerfile: Dockerfile  # Especificamos el nombre del Dockerfile
+    volumes:
+      - ./django_crud_api:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db  # Asumiendo que tienes un servicio de base de datos (PostgreSQL)
+    environment:
+      - DEBUG=True  # O tu configuración de entorno para el backend
+
+  # Servicio para el frontend (React)
+  frontend:
+    build:
+      context: ./client  # Directorio donde está el Dockerfile del frontend
+      dockerfile: Dockerfile  # Especificamos el nombre del Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend  # Aseguramos que el backend esté listo antes de iniciar el frontend
+
+  # Servicio para la base de datos (PostgreSQL)
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: db_name
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
+    driver: local
