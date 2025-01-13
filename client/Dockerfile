@@ -19,5 +19,6 @@ RUN npm install -g serve
 # Exponer el puerto 3000 (que es el puerto por defecto de React)
 EXPOSE 3000
 
-# Comando para servir la aplicación de React
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Comando para servir la aplicación de React con Vite
+CMD ["serve", "-s", "dist", "-l", "3000"]
+

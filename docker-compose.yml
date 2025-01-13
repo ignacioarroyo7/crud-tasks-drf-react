@@ -1,31 +1,31 @@
 version: '3.8'
 
 services:
-  # Servicio para el backend (Django)
   backend:
     build:
-      context: ./django_crud_api  # Directorio donde está el Dockerfile del backend
-      dockerfile: Dockerfile  # Especificamos el nombre del Dockerfile
+      context: ./  # Contexto de la raíz del proyecto
+      dockerfile: django_crud_api/Dockerfile
     volumes:
-      - ./django_crud_api:/app
+      - ./:/app  # Monta toda la raíz del proyecto en /app
+      - ./client/dist:/app/client/dist  # Montar la carpeta dist
+
     ports:
       - "8000:8000"
     depends_on:
-      - db  # Asumiendo que tienes un servicio de base de datos (PostgreSQL)
+      - db
     environment:
-      - DEBUG=True  # O tu configuración de entorno para el backend
+      - DEBUG=True
+      - DATABASE_URL=${DATABASE_URL}
 
-  # Servicio para el frontend (React)
   frontend:
     build:
-      context: ./client  # Directorio donde está el Dockerfile del frontend
-      dockerfile: Dockerfile  # Especificamos el nombre del Dockerfile
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
-      - backend  # Aseguramos que el backend esté listo antes de iniciar el frontend
-
-  # Servicio para la base de datos (PostgreSQL)
+      - backend
+    
   db:
     image: postgres:latest
     environment:
@@ -40,3 +40,4 @@ services:
 volumes:
   pgdata:
     driver: local
+
